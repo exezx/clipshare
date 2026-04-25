@@ -5,7 +5,6 @@ import string
 
 app = Flask(__name__)
 
-# ✅ RENDER FIX (only writable dir)
 UPLOAD_FOLDER = "/tmp/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -14,9 +13,7 @@ app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 def generate_id(length=6):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-# ======================
-# UPLOAD PAGE
-# ======================
+
 @app.route("/", methods=["GET", "POST"])
 def upload():
     if request.method == "POST":
@@ -230,9 +227,7 @@ function toggleMode(){
 </html>
 '''
 
-# ======================
-# CLIP PAGE
-# ======================
+
 @app.route("/clip/<clip_id>")
 def clip(clip_id):
     return f'''
@@ -343,9 +338,7 @@ function copyLink(){{
 </html>
 '''
 
-# ======================
-# SERVE FILE
-# ======================
+
 @app.route("/file/<clip_id>")
 def file(clip_id):
     for f in os.listdir(UPLOAD_FOLDER):
