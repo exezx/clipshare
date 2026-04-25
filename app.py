@@ -4,7 +4,9 @@ import random
 import string
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "uploads"
+
+# ✅ RENDER FIX (only writable dir)
+UPLOAD_FOLDER = "/tmp/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
@@ -38,17 +40,8 @@ def upload():
 <title>Escape</title>
 
 <style>
-:root {
-    --bg:#000;
-    --card:#111;
-    --text:white;
-}
-
-.light {
-    --bg:#f5f5f5;
-    --card:white;
-    --text:black;
-}
+:root { --bg:#000; --card:#111; --text:white; }
+.light { --bg:#f5f5f5; --card:white; --text:black; }
 
 body {
     margin:0;
@@ -57,7 +50,6 @@ body {
     font-family:Arial;
 }
 
-/* LOGO */
 .logo {
     position:absolute;
     top:20px;
@@ -70,7 +62,6 @@ body {
     text-shadow:0 0 10px #8b5cf6;
 }
 
-/* CENTER */
 .wrapper {
     display:flex;
     justify-content:center;
@@ -78,7 +69,6 @@ body {
     height:100vh;
 }
 
-/* CARD */
 .card {
     background:var(--card);
     padding:40px;
@@ -88,19 +78,14 @@ body {
     box-shadow:0 0 60px rgba(139,92,246,0.2);
 }
 
-/* DROP */
 .drop {
     border:2px dashed #444;
     padding:80px 20px;
     border-radius:14px;
     cursor:pointer;
-    transition:0.3s;
 }
-.drop:hover {
-    border-color:#8b5cf6;
-}
+.drop:hover { border-color:#8b5cf6; }
 
-/* FILE INFO */
 .file-info {
     display:none;
     margin-top:15px;
@@ -110,7 +95,6 @@ body {
     justify-content:space-between;
 }
 
-/* BUTTON */
 button {
     display:none;
     margin-top:15px;
@@ -123,31 +107,17 @@ button {
     cursor:pointer;
 }
 
-/* PROGRESS */
 .progress {
     display:none;
     margin-top:10px;
     height:6px;
     background:#333;
-    border-radius:10px;
 }
-.bar {
-    height:100%;
-    width:0%;
-    background:#8b5cf6;
-    border-radius:10px;
-}
+.bar { height:100%; width:0%; background:#8b5cf6; }
 
-/* ERROR */
-.error {
-    color:red;
-    display:none;
-    margin-top:10px;
-}
-
+.error { color:red; display:none; margin-top:10px; }
 input { display:none; }
 
-/* TOGGLE */
 .toggle {
     position:fixed;
     bottom:20px;
@@ -173,7 +143,7 @@ input { display:none; }
 
 <div class="file-info" id="fileInfo">
     <span id="fileName"></span>
-    <span style="cursor:pointer;" onclick="clearFile()">✖</span>
+    <span onclick="clearFile()" style="cursor:pointer;">✖</span>
 </div>
 
 <button id="uploadBtn">Upload File</button>
@@ -190,7 +160,6 @@ input { display:none; }
 <script>
 const input = document.getElementById("fileInput");
 const drop = document.getElementById("dropBox");
-const text = document.getElementById("text");
 const fileInfo = document.getElementById("fileInfo");
 const fileName = document.getElementById("fileName");
 const uploadBtn = document.getElementById("uploadBtn");
@@ -206,7 +175,6 @@ drop.ondrop = e => {
     e.preventDefault();
     handleFile(e.dataTransfer.files[0]);
 };
-
 drop.ondragover = e => e.preventDefault();
 
 function handleFile(file){
@@ -271,23 +239,19 @@ def clip(clip_id):
 <!DOCTYPE html>
 <html>
 <head>
+
+<!-- DISCORD EMBED -->
+<meta property="og:title" content="Escape Clip">
+<meta property="og:type" content="video.other">
+<meta property="og:url" content="{request.url}">
+<meta property="og:video" content="{request.host_url}file/{clip_id}">
+<meta property="og:video:type" content="video/mp4">
+
 <style>
-:root {{
-    --bg:#000;
-    --card:#111;
-    --text:white;
-}}
-
-.light {{
-    --bg:#f5f5f5;
-    --card:white;
-    --text:black;
-}}
-
 body {{
     margin:0;
-    background:var(--bg);
-    color:var(--text);
+    background:#000;
+    color:white;
     font-family:Arial;
 }}
 
@@ -298,18 +262,7 @@ body {{
     font-weight:800;
     font-size:22px;
 }}
-.logo span {{
-    color:#8b5cf6;
-    text-shadow:0 0 10px #8b5cf6;
-}}
-
-.close {{
-    position:absolute;
-    top:20px;
-    right:20px;
-    font-size:22px;
-    cursor:pointer;
-}}
+.logo span {{ color:#8b5cf6; }}
 
 .wrapper {{
     display:flex;
@@ -319,26 +272,21 @@ body {{
 }}
 
 .card {{
-    background:var(--card);
+    background:#111;
     padding:25px;
     border-radius:18px;
     width:820px;
-    box-shadow:0 0 80px rgba(139,92,246,0.25);
 }}
 
 .video-box {{
     width:100%;
     aspect-ratio:16/9;
     background:black;
-    border-radius:14px;
-    overflow:hidden;
 }}
 
 video {{
     width:100%;
     height:100%;
-    object-fit:contain;
-    filter: contrast(1.05) saturate(1.05);
 }}
 
 .link-box {{
@@ -350,26 +298,16 @@ video {{
 .link-box input {{
     flex:1;
     padding:10px;
-    border:none;
-    border-radius:8px;
     background:#222;
+    border:none;
     color:white;
 }}
 
 .link-box button {{
-    padding:10px 15px;
+    padding:10px;
+    background:#7c3aed;
     border:none;
-    border-radius:8px;
-    background:linear-gradient(135deg,#7c3aed,#4f46e5);
     color:white;
-    cursor:pointer;
-}}
-
-.toggle {{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    cursor:pointer;
 }}
 </style>
 </head>
@@ -377,7 +315,6 @@ video {{
 <body>
 
 <div class="logo">Escape<span>.</span></div>
-<div class="close" onclick="window.location='/'">✖</div>
 
 <div class="wrapper">
 <div class="card">
@@ -389,25 +326,16 @@ video {{
 </div>
 
 <div class="link-box">
-    <input value="http://127.0.0.1:5000/clip/{clip_id}" id="link" readonly>
+    <input value="{request.host_url}clip/{clip_id}" id="link" readonly>
     <button onclick="copyLink()">Copy</button>
 </div>
 
 </div>
 </div>
 
-<div class="toggle" onclick="toggleMode()">🌙</div>
-
 <script>
 function copyLink(){{
-    const btn = event.target;
     navigator.clipboard.writeText(document.getElementById("link").value);
-    btn.innerText = "Copied!";
-    setTimeout(()=>btn.innerText="Copy", 1500);
-}}
-
-function toggleMode(){{
-    document.body.classList.toggle("light");
 }}
 </script>
 
@@ -424,6 +352,3 @@ def file(clip_id):
         if f.startswith(clip_id):
             return send_from_directory(UPLOAD_FOLDER, f)
     return "File not found"
-
-if __name__ == "__main__":
-    app.run(debug=True)
